@@ -6,7 +6,6 @@ from django.db import models
 from django.utils import timezone
 
 
-
 class CustomUserManager(UserManager):
     def _create_user(self, name, email, password, **extra_fields):
         if not email:
@@ -35,6 +34,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    bio = models.TextField(blank=True,default='')
+    # ideas = ArrayField(models.IntegerField(), blank=True, null=True)
+
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -47,3 +49,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+# class Idea(models.Model):
+#     author = models.ForeignKey(User, on_delete=models.CASCADE)
+#     content = models.TextField()
+#     attachments = ArrayField(models.IntegerField(), blank=True, null=True) 
+#     like_count = models.IntegerField(default=0)
+#     share_count = models.IntegerField(default=0)
+#     likes = ArrayField(models.IntegerField(), blank=True, null=True) 
+#     shares = ArrayField(models.IntegerField(), blank=True, null=True)  
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     comments = ArrayField(models.IntegerField(), blank=True, null=True)
+
+#     def __str__(self):
+#         return f"Idea by {self.author}"

@@ -11,7 +11,6 @@ def me(request):
         'id': request.user.id,
         'name': request.user.name,
         'email': request.user.email,
-        # 'avatar': request.user.get_avatar()
     })
 
 
@@ -32,7 +31,7 @@ def signup(request):
     if form.is_valid():
         form.save()
 
-        # Send verification email later!
+        # verify email later
     else:
         errors = form.errors.as_text()
         # print(errors)
