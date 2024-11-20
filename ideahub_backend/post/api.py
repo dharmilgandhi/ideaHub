@@ -8,7 +8,7 @@ from account.serializers import UserSerializer
 from notification.utils import create_notification
 
 from .forms import PostForm, AttachmentForm
-from .models import Post, Like, Comment, Trend
+from .models import Post, Like, Comment, Trend, Dislike
 from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
 
 
@@ -84,6 +84,10 @@ def post_like(request, pk):
     post = Post.objects.get(pk=pk)
 
     if not post.likes.filter(created_by=request.user):
+        if post.dislikes.filter(created_by=request.user):
+            post.dislikes_count = post.dislikes_count - 1
+            post.save()
+            Dislike.objects.filter(created_by=request.user).delete()
         like = Like.objects.create(created_by=request.user)
 
         post = Post.objects.get(pk=pk)
@@ -96,6 +100,28 @@ def post_like(request, pk):
         return JsonResponse({'message': 'like created'})
     else:
         return JsonResponse({'message': 'post already liked'})
+    
+@api_view(['POST'])
+def post_dislike(request, pk):
+    post = Post.objects.get(pk=pk)
+
+    if not post.dislikes.filter(created_by=request.user):
+        if post.likes.filter(created_by=request.user):
+            post.likes_count = post.likes_count - 1
+            post.save()
+            Like.objects.filter(created_by=request.user).delete()
+        dislike = Dislike.objects.create(created_by=request.user)
+
+        post = Post.objects.get(pk=pk)
+        post.dislikes_count = post.dislikes_count + 1
+        post.dislikes.add(dislike)
+        post.save()
+
+        notification = create_notification(request, 'post_dislike', post_id=post.id)
+
+        return JsonResponse({'message': 'Post Dislike'})
+    else:
+        return JsonResponse({'message': 'post already disliked'})
 
 
 @api_view(['POST'])

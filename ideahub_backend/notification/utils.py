@@ -9,6 +9,10 @@ def create_notification(request, type_of_notification, post_id=None, friendreque
         body = f'{request.user.name} liked one of your posts!'
         post = Post.objects.get(pk=post_id)
         created_for = post.created_by
+    elif type_of_notification == 'post_dislike':
+        body = f'{request.user.name} disliked one of your posts!'
+        post = Post.objects.get(pk=post_id)
+        created_for = post.created_by
     elif type_of_notification == 'post_comment':
         body = f'{request.user.name} commented on one of your posts!'
         post = Post.objects.get(pk=post_id)

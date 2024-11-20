@@ -12,6 +12,10 @@ class Like(models.Model):
     created_by = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Dislike(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_by = models.ForeignKey(User, related_name='dislikes', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -40,6 +44,7 @@ class PostAttachment(models.Model):
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.CharField(blank=True, null=True,max_length=255)
     body = models.TextField(blank=True, null=True)
 
     attachments = models.ManyToManyField(PostAttachment, blank=True)
@@ -49,6 +54,9 @@ class Post(models.Model):
     likes = models.ManyToManyField(Like, blank=True)
     likes_count = models.IntegerField(default=0)
 
+    dislikes = models.ManyToManyField(Dislike, blank=True)
+    dislikes_count = models.IntegerField(default=0)
+    
     comments = models.ManyToManyField(Comment, blank=True)
     comments_count = models.IntegerField(default=0)
 
