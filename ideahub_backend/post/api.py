@@ -77,7 +77,18 @@ def post_create(request):
         return JsonResponse(serializer.data, safe=False)
     else:
         return JsonResponse({'error': 'add somehting here later!...'})
-    
+
+@api_view(['POST'])
+def bookmark_post(request,pk):
+    if request.method == "POST":
+        post = Post.objects.get(pk=pk)
+        if request.user in post.bookmark.all():
+            post.bookmark.remove(request.user)
+            return JsonResponse({'message': 'Bookmark removed'})
+        else:
+            post.bookmark.add(request.user)
+            return JsonResponse({'message': 'Bookmark created'})
+
 
 @api_view(['POST'])
 def post_like(request, pk):

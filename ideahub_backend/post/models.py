@@ -66,6 +66,9 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
 
+    bookmark = models.ManyToManyField(
+        User, related_name="bookmark", blank=True, default=None)
+
     community = models.ForeignKey(
         Community, 
         related_name='posts', 
