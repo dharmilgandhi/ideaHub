@@ -80,14 +80,22 @@ def post_create(request):
 
 @api_view(['POST'])
 def bookmark_post(request,pk):
-    if request.method == "POST":
-        post = Post.objects.get(pk=pk)
-        if request.user in post.bookmark.all():
-            post.bookmark.remove(request.user)
-            return JsonResponse({'message': 'Bookmark removed'})
-        else:
-            post.bookmark.add(request.user)
-            return JsonResponse({'message': 'Bookmark created'})
+    post = Post.objects.get(pk=pk)
+    if request.user in post.bookmark.all():
+        post.bookmark.remove(request.user)
+        return JsonResponse({'message': 'Bookmark removed'})
+    else:
+        post.bookmark.add(request.user)
+        return JsonResponse({'message': 'Bookmark created'})
+        
+@api_view(['GET'])
+def get_user_bookmarks(request):
+
+    posts = Post.objects.all()
+    posts = Post.objects.filter(bookmark = request.user)
+    serializer = PostSerializer(posts, many=True)
+
+    return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['POST'])
