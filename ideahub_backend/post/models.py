@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.timesince import timesince
 
 from account.models import User
+from communities.models import Community 
 
 
 class Like(models.Model):
@@ -65,6 +66,13 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
 
+    community = models.ForeignKey(
+        Community, 
+        related_name='posts', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True
+    )
     class Meta:
         ordering = ('-created_at',)
     

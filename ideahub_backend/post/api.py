@@ -15,7 +15,7 @@ from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 @api_view(['GET'])
 def post_list(request):
     posts = Post.objects.all()
-
+    posts = posts.filter(community__isnull=True)
     trend = request.GET.get('trend', '')
 
     if trend:
