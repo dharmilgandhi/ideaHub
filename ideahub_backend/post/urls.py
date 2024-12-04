@@ -15,5 +15,6 @@ urlpatterns = [
     path("bookmark/<uuid:pk>/", api.bookmark_post, name="bookmark_post"),
     path("bookmarks/", api.get_user_bookmarks, name="get_user_bookmarks"),
     path('create/', api.post_create, name='post_create'),
+    path('edit/<uuid:pk>/', api.post_edit, name='post_edit'),
     path('trends/', api.get_trends, name='get_trends'),
 ]

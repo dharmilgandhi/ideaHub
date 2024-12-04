@@ -10,7 +10,7 @@ from notification.utils import create_notification
 from .forms import PostForm, AttachmentForm
 from .models import Post, Like, Comment, Trend, Dislike
 from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
-
+from django.utils.timezone import now
 
 @api_view(['GET'])
 def post_list(request):
@@ -72,11 +72,30 @@ def post_create(request):
         user.posts_count = user.posts_count + 1
         user.save()
 
+        
         serializer = PostSerializer(post)
 
         return JsonResponse(serializer.data, safe=False)
     else:
-        return JsonResponse({'error': 'add somehting here later!...'})
+        return JsonResponse({'error': 'Error while creating a post'})
+    
+@api_view(['POST'])
+def post_edit(request, pk):
+    try:
+        post = Post.objects.filter(created_by=request.user).get(pk=pk)
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found or you are not authorized to edit this post.'}, status=404)
+
+    form = PostForm(request.POST, instance=post)
+
+    if form.is_valid():
+        updated_post = form.save(commit=False)
+        updated_post.created_at = now()
+        updated_post.save()
+        serializer = PostSerializer(updated_post)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid data provided.'}, status=400)
 
 @api_view(['POST'])
 def bookmark_post(request,pk):
