@@ -87,11 +87,24 @@ def post_edit(request, pk):
         return JsonResponse({'error': 'Post not found or you are not authorized to edit this post.'}, status=404)
 
     form = PostForm(request.POST, instance=post)
+    attachment = None
+    attachment_form = AttachmentForm(request.POST, request.FILES)
+
+    if attachment_form.is_valid():
+        attachment = attachment_form.save(commit=False)
+        attachment.created_by = request.user
+        attachment.save()
+
+
 
     if form.is_valid():
         updated_post = form.save(commit=False)
         updated_post.created_at = now()
         updated_post.save()
+
+        if attachment:
+            post.attachments.add(attachment)
+            
         serializer = PostSerializer(updated_post)
         return JsonResponse(serializer.data, safe=False)
     else:
